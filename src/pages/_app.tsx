@@ -1,14 +1,14 @@
-import type { AppProps } from "next/app";
-import "../styles/globals.css";
-import { Auth0ProviderWithConfig } from '../auth/auth0-provider-with-config';
-
+// pages/_app.tsx
+import type { AppProps } from 'next/app'
+import '../styles/globals.css'
+import { UserProvider } from '@auth0/nextjs-auth0/client'
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <Auth0ProviderWithConfig>
+    <UserProvider>
       <Component {...pageProps} />
-    </Auth0ProviderWithConfig>
-  );
+    </UserProvider>
+  )
 }
 
-export default MyApp;
+export default MyApp

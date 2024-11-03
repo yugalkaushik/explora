@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from 'axios'
 
 export const createApiService = (token: string) => {
   const api = axios.create({
@@ -6,10 +6,10 @@ export const createApiService = (token: string) => {
     headers: {
       Authorization: `Bearer ${token}`,
     },
-  });
+  })
 
   return {
     getProfile: () => api.get('/api/profile'),
     // Add other API calls here
-  };
-};
+  }
+}

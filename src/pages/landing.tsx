@@ -1,6 +1,7 @@
-import Head from "next/head";
-import Hero from "@/components/Hero";
-import Blogs from "@/components/Blogs";
+import Head from 'next/head'
+import Hero from '@/components/Hero'
+import Blogs from '@/components/Blogs'
+import Navbar from '@/components/Navbar'
 
 const Landing = () => {
   return (
@@ -10,11 +11,12 @@ const Landing = () => {
         <meta name="description" content="Plan your perfect travel journey." />
       </Head>
       <main className="pt-8">
+        <Navbar />
         <Hero />
         <Blogs />
       </main>
     </>
-  );
-};
+  )
+}
 
-export default Landing;
+export default Landing

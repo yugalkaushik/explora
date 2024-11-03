@@ -5,15 +5,15 @@
 @tailwind utilities;
 
 body {
-  font-family: "Quicksand", sans-serif;
+  font-family: 'Quicksand', sans-serif;
   background-color: #fff;
   min-height: 100vh;
 }
 
 .asap {
-  font-family: "Asap", sans-serif;
+  font-family: 'Asap', sans-serif;
 }
 
 .patua-one {
-  font-family: "Patua One", cursive;
+  font-family: 'Patua One', cursive;
 }
