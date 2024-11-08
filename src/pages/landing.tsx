@@ -1,7 +1,7 @@
-import Head from 'next/head'
-import Hero from '@/components/Hero'
-import Blogs from '@/components/Blogs'
-import Navbar from '@/components/Navbar'
+import Head from 'next/head';
+import Hero from '@/components/Hero';
+import Blogs from '@/components/Blogs';
+import Navbar from '@/components/Navbar';
 
 const Landing = () => {
   return (
@@ -16,7 +16,7 @@ const Landing = () => {
         <Blogs />
       </main>
     </>
-  )
-}
+  );
+};
 
-export default Landing
+export default Landing;

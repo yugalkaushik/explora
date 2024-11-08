@@ -1,7 +1,7 @@
-import Landing from './landing'
+import Landing from './landing';
 
 const Home = () => {
-  return <Landing />
-}
+  return <Landing />;
+};
 
-export default Home
+export default Home;

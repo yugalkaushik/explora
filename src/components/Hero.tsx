@@ -1,42 +1,42 @@
-import React, { useState, useEffect } from 'react'
-import Image, { StaticImageData } from 'next/image'
-import hero1 from '@/assets/images/hero1.jpg'
-import hero2 from '@/assets/images/hero2.jpg'
-import hero3 from '@/assets/images/hero3.jpg'
+import React, { useState, useEffect } from 'react';
+import Image, { StaticImageData } from 'next/image';
+import hero1 from '@/assets/images/hero1.jpg';
+import hero2 from '@/assets/images/hero2.jpg';
+import hero3 from '@/assets/images/hero3.jpg';
 import {
   ChevronLeft,
   ChevronRight,
   Cloud,
   Thermometer,
-  Calendar,
   MapPin,
-} from 'lucide-react'
-import Papa from 'papaparse'
+} from 'lucide-react';
+import Papa from 'papaparse';
+import { useRouter } from 'next/router';
+import { useAuth0 } from '@auth0/auth0-react';
 
 interface Coordinates {
-  lat: number
-  lon: number
+  lat: number;
+  lon: number;
 }
 
 interface Place {
-  name: string
-  country: string
-  image: StaticImageData
-  city: string
-  coordinates: Coordinates
+  name: string;
+  country: string;
+  image: StaticImageData;
+  city: string;
+  coordinates: Coordinates;
 }
 
 interface WeatherData {
-  temperature?: number
-  weatherDescription?: string
+  temperature?: number;
+  weatherDescription?: string;
 }
 
-const API_KEY = '239b1bb0e0ec9a9110577b4197e40f8f'
+const API_KEY = '239b1bb0e0ec9a9110577b4197e40f8f';
 
 const Hero = () => {
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [fromDate, setFromDate] = useState('')
-  const [toDate, setToDate] = useState('')
+  const router = useRouter();
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [places] = useState<Place[]>([
     {
       name: 'Swiss Alps',
@@ -59,17 +59,15 @@ const Hero = () => {
       city: 'Veneto',
       coordinates: { lat: 46.4102, lon: 11.844 },
     },
-  ])
-  const [searchInput, setSearchInput] = useState<string>('')
-  const [suggestions, setSuggestions] = useState<Place[]>([])
-  const [errorMessage, setErrorMessage] = useState<string>('')
-  const [allLocations, setAllLocations] = useState<Place[]>([])
-  const [weatherData, setWeatherData] = useState<WeatherData[]>([])
+  ]);
+  const [searchInput, setSearchInput] = useState<string>('');
+  const [suggestions, setSuggestions] = useState<Place[]>([]);
+  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [allLocations, setAllLocations] = useState<Place[]>([]);
+  const [weatherData, setWeatherData] = useState<WeatherData[]>([]);
 
-  const today = new Date().toISOString().split('T')[0]
-  const maxDate = new Date()
-  maxDate.setFullYear(maxDate.getFullYear() + 1)
-  const maxDateStr = maxDate.toISOString().split('T')[0]
+  const maxDate = new Date();
+  maxDate.setFullYear(maxDate.getFullYear() + 1);
 
   const fetchWeatherData = async () => {
     try {
@@ -78,101 +76,110 @@ const Hero = () => {
           try {
             const response = await fetch(
               `https://api.openweathermap.org/data/2.5/weather?lat=${place.coordinates.lat}&lon=${place.coordinates.lon}&units=metric&appid=${API_KEY}`
-            )
+            );
 
             if (!response.ok) {
-              throw new Error(`Failed to fetch weather data for ${place.city}`)
+              throw new Error(`Failed to fetch weather data for ${place.city}`);
             }
 
-            const data = await response.json()
+            const data = await response.json();
             return {
               temperature: Math.round(data.main.temp),
               weatherDescription: data.weather[0].description,
-            }
+            };
           } catch (error) {
             console.error(
               `Error fetching weather data for ${place.city}:`,
               error
-            )
+            );
             return {
               temperature: undefined,
               weatherDescription: undefined,
-            }
+            };
           }
         })
-      )
-      setWeatherData(updatedWeatherData)
+      );
+      setWeatherData(updatedWeatherData);
     } catch (error) {
-      console.error('Error fetching weather data:', error)
+      console.error('Error fetching weather data:', error);
     }
-  }
+  };
 
   useEffect(() => {
-    fetchWeatherData()
-    const interval = setInterval(fetchWeatherData, 30 * 60 * 1000)
-    return () => clearInterval(interval)
-  }, [])
+    fetchWeatherData();
+    const interval = setInterval(fetchWeatherData, 30 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const loadLocations = async () => {
-      const response = await fetch('/locations.csv')
-      const text = await response.text()
+      const response = await fetch('/locations.csv');
+      const text = await response.text();
       Papa.parse(text, {
         header: true,
         complete: (results) => {
-          setAllLocations(results.data as Place[])
+          setAllLocations(results.data as Place[]);
         },
-      })
-    }
-    loadLocations()
-  }, [])
+      });
+    };
+    loadLocations();
+  }, []);
 
   const nextSlide = () => {
     setCurrentIndex((prevIndex) =>
       prevIndex === places.length - 1 ? 0 : prevIndex + 1
-    )
-  }
+    );
+  };
 
   const prevSlide = () => {
     setCurrentIndex((prevIndex) =>
       prevIndex === 0 ? places.length - 1 : prevIndex - 1
-    )
-  }
+    );
+  };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
-    setSearchInput(value)
+    const value = e.target.value;
+    setSearchInput(value);
     if (value) {
       const filteredSuggestions = allLocations.filter((place) =>
         place.city.toLowerCase().includes(value.toLowerCase())
-      )
+      );
       if (filteredSuggestions.length > 0) {
-        setSuggestions(filteredSuggestions)
-        setErrorMessage('')
+        setSuggestions(filteredSuggestions);
+        setErrorMessage('');
       } else {
-        setSuggestions([])
-        setErrorMessage('Location not available')
+        setSuggestions([]);
+        setErrorMessage('Location not available');
       }
     } else {
-      setSuggestions([])
-      setErrorMessage('')
+      setSuggestions([]);
+      setErrorMessage('');
     }
-  }
+  };
 
   const selectSuggestion = (place: Place) => {
-    setSearchInput(place.city)
-    setSuggestions([])
-    const index = places.findIndex((p) => p.city === place.city)
+    setSearchInput(place.city);
+    setSuggestions([]);
+    const index = places.findIndex((p) => p.city === place.city);
     if (index !== -1) {
-      setCurrentIndex(index)
+      setCurrentIndex(index);
     }
-  }
+  };
 
-  // Automatic slide change every 6 seconds
   useEffect(() => {
-    const autoSlide = setInterval(nextSlide, 6000)
-    return () => clearInterval(autoSlide)
-  }, [currentIndex])
+    const autoSlide = setInterval(nextSlide, 6000);
+    return () => clearInterval(autoSlide);
+  }, [currentIndex]);
+
+  const { isAuthenticated } = useAuth0();
+
+  const handleStartPlanningClick = () => {
+    if (isAuthenticated) {
+      router.push('/itineraries');
+    } else {
+      router.push('/api/auth/login?returnTo=/itineraries');
+    }
+  };
 
   return (
     <div className="flex flex-col items-center min-h-screen mt-20">
@@ -232,7 +239,7 @@ const Hero = () => {
           <div className="flex flex-col space-y-2">
             <label className="flex items-center text-gray-600 text-sm font-medium">
               <MapPin className="w-4 h-4 mr-2" />
-              Location
+              Find your perfect vacation spot
             </label>
             <input
               type="text"
@@ -257,14 +264,17 @@ const Hero = () => {
             )}
           </div>
           <div className="flex justify-center mt-4">
-            <button className="w-1/3 bg-gray-900 text-white py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors">
+            <button
+              onClick={handleStartPlanningClick}
+              className="w-1/3 bg-gray-900 text-white py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors"
+            >
               Start Planning
             </button>
           </div>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Hero
+export default Hero;

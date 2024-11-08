@@ -1,49 +1,49 @@
-import Link from 'next/link'
-import { MagnifyingGlassIcon, Bars3Icon } from '@heroicons/react/24/solid'
-import Image from 'next/image'
-import logo from '../assets/images/logo.svg'
-import { useState, useEffect, useRef } from 'react'
-import { useRouter } from 'next/router'
-import { useUser } from '@auth0/nextjs-auth0/client'
+import Link from 'next/link';
+import { MagnifyingGlassIcon, Bars3Icon } from '@heroicons/react/24/solid';
+import Image from 'next/image';
+import logo from '../assets/images/logo.svg';
+import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/router';
+import { useUser } from '@auth0/nextjs-auth0/client';
 
 const Navbar = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [showProfile, setShowProfile] = useState(false)
-  const router = useRouter()
-  const { user, isLoading } = useUser()
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
+  const router = useRouter();
+  const { user, isLoading } = useUser();
   const [profileData, setProfileData] = useState({
     name: '',
     email: '',
     phoneNumber: '',
     address: '',
-  })
-  const [isSaving, setIsSaving] = useState(false)
-  const profileRef = useRef<HTMLDivElement>(null) // Create a ref for the profile dropdown
+  });
+  const [isSaving, setIsSaving] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null); // Create a ref for the profile dropdown
 
   useEffect(() => {
     const fetchProfileData = async () => {
       if (user?.email) {
         try {
-          const response = await fetch(`/api/profile?email=${user.email}`)
+          const response = await fetch(`/api/profile?email=${user.email}`);
           if (response.ok) {
-            const data = await response.json()
+            const data = await response.json();
             setProfileData({
               name: data.name || user.name || '',
               email: user.email,
               phoneNumber: data.phoneNumber || '',
               address: data.address || '',
-            })
+            });
           }
         } catch (error) {
-          console.error('Error fetching profile:', error)
+          console.error('Error fetching profile:', error);
         }
       }
-    }
+    };
 
     if (user) {
-      fetchProfileData()
+      fetchProfileData();
     }
-  }, [user])
+  }, [user]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -51,29 +51,29 @@ const Navbar = () => {
         profileRef.current &&
         !profileRef.current.contains(event.target as Node)
       ) {
-        setShowProfile(false) // Close the profile dropdown if clicked outside
+        setShowProfile(false); // Close the profile dropdown if clicked outside
       }
-    }
+    };
 
-    document.addEventListener('mousedown', handleClickOutside)
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [])
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setProfileData((prev) => ({
       ...prev,
       [name]: value,
-    }))
-  }
+    }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSaving(true)
+    e.preventDefault();
+    setIsSaving(true);
 
     try {
       const response = await fetch('/api/profile', {
@@ -85,26 +85,26 @@ const Navbar = () => {
           ...profileData,
           email: user?.email,
         }),
-      })
+      });
 
       if (response.ok) {
-        setShowProfile(false)
+        setShowProfile(false);
       }
     } catch (error) {
-      console.error('Error saving profile:', error)
+      console.error('Error saving profile:', error);
     } finally {
-      setIsSaving(false)
+      setIsSaving(false);
     }
-  }
+  };
 
   const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen)
-  }
+    setIsMenuOpen(!isMenuOpen);
+  };
 
-  const hiddenRoutes = ['/login', '/signup']
+  const hiddenRoutes = ['/login', '/signup'];
 
   if (hiddenRoutes.includes(router.pathname)) {
-    return null
+    return null;
   }
 
   return (
@@ -301,7 +301,7 @@ const Navbar = () => {
         </div>
       )}
     </nav>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;
