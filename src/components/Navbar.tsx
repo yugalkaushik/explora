@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { MagnifyingGlassIcon, Bars3Icon } from '@heroicons/react/24/solid';
+import { Bars3Icon } from '@heroicons/react/24/solid';
 import Image from 'next/image';
 import logo from '../assets/images/logo.svg';
 import { useState, useEffect, useRef } from 'react';
@@ -51,7 +51,7 @@ const Navbar = () => {
         profileRef.current &&
         !profileRef.current.contains(event.target as Node)
       ) {
-        setShowProfile(false); // Close the profile dropdown if clicked outside
+        setShowProfile(false); 
       }
     };
 
@@ -160,11 +160,13 @@ const Navbar = () => {
                 <p className="text-xs text-gray-500">view profile</p>
               </div>
               {user.picture && (
-                <img
-                  src={user.picture}
-                  alt="Profile"
-                  className="w-6 h-6 rounded-full"
-                />
+                <Image
+                src={user.picture}
+                alt="Profile"
+                width={24} 
+                height={24}
+                className="rounded-full"
+              />
               )}
             </button>
 

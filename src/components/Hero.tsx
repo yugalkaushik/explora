@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Image, { StaticImageData } from 'next/image';
 import hero1 from '@/assets/images/hero1.jpg';
 import hero2 from '@/assets/images/hero2.jpg';
@@ -69,7 +69,8 @@ const Hero = () => {
   const maxDate = new Date();
   maxDate.setFullYear(maxDate.getFullYear() + 1);
 
-  const fetchWeatherData = async () => {
+  // Wrap fetchWeatherData in useCallback to avoid creating a new instance each time
+  const fetchWeatherData = useCallback(async () => {
     try {
       const updatedWeatherData = await Promise.all(
         places.map(async (place) => {
@@ -103,13 +104,13 @@ const Hero = () => {
     } catch (error) {
       console.error('Error fetching weather data:', error);
     }
-  };
+  }, [places]); 
 
   useEffect(() => {
     fetchWeatherData();
     const interval = setInterval(fetchWeatherData, 30 * 60 * 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchWeatherData]); // Use fetchWeatherData in the dependency array
 
   useEffect(() => {
     const loadLocations = async () => {
@@ -125,11 +126,11 @@ const Hero = () => {
     loadLocations();
   }, []);
 
-  const nextSlide = () => {
+  const nextSlide = useCallback(() => {
     setCurrentIndex((prevIndex) =>
       prevIndex === places.length - 1 ? 0 : prevIndex + 1
     );
-  };
+  }, [places.length]); 
 
   const prevSlide = () => {
     setCurrentIndex((prevIndex) =>
@@ -169,7 +170,7 @@ const Hero = () => {
   useEffect(() => {
     const autoSlide = setInterval(nextSlide, 6000);
     return () => clearInterval(autoSlide);
-  }, [currentIndex]);
+  }, [nextSlide]);
 
   const { isAuthenticated } = useAuth0();
 

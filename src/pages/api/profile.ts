@@ -1,4 +1,3 @@
-// pages/api/profile.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 import { MongoClient } from 'mongodb';
 
@@ -35,26 +34,11 @@ export default async function handler(
     }
 
     if (req.method === 'POST') {
-      const { email, name, phoneNumber, address } = req.body;
+      const { email } = req.body;
 
       if (!email) {
         return res.status(400).json({ error: 'Email is required' });
       }
-
-      // Update or insert the profile
-      const result = await collection.updateOne(
-        { email },
-        {
-          $set: {
-            name,
-            email,
-            phoneNumber,
-            address,
-            updatedAt: new Date(),
-          },
-        },
-        { upsert: true }
-      );
 
       await client.close();
       return res.status(200).json({
@@ -63,7 +47,6 @@ export default async function handler(
       });
     }
 
-    // Method not allowed
     return res.status(405).json({ error: 'Method not allowed' });
   } catch (error) {
     await client.close();
